@@ -22,13 +22,13 @@ from pyclustering.utils.metric import distance_metric, type_metric
 class random_center_initializer:
     """!
     @brief Random center initializer is for generation specified amount of random of centers for specified data.
-    
+
     """
 
     def __init__(self, data, amount_centers, **kwargs):
         """!
         @brief Creates instance of random center initializer.
-        
+
         @param[in] data (list): List of points where each point is represented by list of coordinates.
         @param[in] amount_centers (unit): Amount of centers that should be initialized.
         @param[in] **kwargs: Arbitrary keyword arguments (available arguments: 'random_state').
@@ -37,7 +37,7 @@ class random_center_initializer:
             - random_state (int): Seed for random state (by default is `None`, current system time is used).
 
         """
-        
+
         self.__data = data
         self.__amount = amount_centers
         self.__available_indexes = set(list(range(len(self.__data))))
@@ -48,8 +48,8 @@ class random_center_initializer:
             raise ValueError("Amount of cluster centers should be at least 1.")
 
         if self.__amount > len(self.__data):
-            raise ValueError("Amount of cluster centers '%d' should be less than data size." % self.__amount)
-
+            raise ValueError(
+                "Amount of cluster centers '%d' should be less than data size." % self.__amount)
 
     def initialize(self, **kwargs):
         """!
@@ -63,7 +63,7 @@ class random_center_initializer:
         @return (list) List of initialized initial centers.
                   If argument 'return_index' is False then returns list of points.
                   If argument 'return_index' is True then returns list of indexes.
-        
+
         """
         return_index = kwargs.get('return_index', False)
         if self.__amount == len(self.__data):
@@ -73,13 +73,12 @@ class random_center_initializer:
 
         return [self.__create_center(return_index) for _ in range(self.__amount)]
 
-
     def __create_center(self, return_index):
         """!
         @brief Generates and returns random center.
 
         @param[in] return_index (bool): If True then returns index of point from input data instead of point itself.
-        
+
         """
         random_index_point = random.randint(0, len(self.__data))
         if random_index_point not in self.__available_indexes:
@@ -90,7 +89,6 @@ class random_center_initializer:
         if return_index:
             return random_index_point
         return self.__data[random_index_point]
-
 
 
 class kmeans_plusplus_initializer:
@@ -126,7 +124,7 @@ class kmeans_plusplus_initializer:
     There is an example of initial centers that were calculated by the K-Means++ method:
 
     @image html kmeans_plusplus_initializer_results.png
-    
+
     Code example where initial centers are prepared for K-Means algorithm:
     @code
         from pyclustering.cluster.center_initializer import kmeans_plusplus_initializer
@@ -159,15 +157,13 @@ class kmeans_plusplus_initializer:
 
     """
 
-
-    ## Constant denotes that only points with highest probabilities should be considered as centers.
+    # Constant denotes that only points with highest probabilities should be considered as centers.
     FARTHEST_CENTER_CANDIDATE = "farthest"
-
 
     def __init__(self, data, amount_centers, amount_candidates=None, **kwargs):
         """!
         @brief Creates K-Means++ center initializer instance.
-        
+
         @param[in] data (array_like): Points where each point is represented by list of coordinates.
         @param[in] amount_centers (uint): Amount of centers that should be initialized.
         @param[in] amount_candidates (uint): Amount of candidates that is considered as a center, if the farthest points
@@ -183,7 +179,7 @@ class kmeans_plusplus_initializer:
         @see FARTHEST_CENTER_CANDIDATE
 
         """
-        
+
         self.__data = numpy.array(data)
         self.__amount = amount_centers
         self.__free_indexes = set(range(len(self.__data)))
@@ -199,12 +195,12 @@ class kmeans_plusplus_initializer:
         numpy.random.seed(random_seed)
         random.seed(random_seed)
 
-        self.__metric = kwargs.get('metric', distance_metric(type_metric.EUCLIDEAN_SQUARE))
+        self.__metric = kwargs.get(
+            'metric', distance_metric(type_metric.EUCLIDEAN_SQUARE))
         self.__data_type = kwargs.get('data_type', 'points')
 
         self.__metric.enable_numpy_usage()
         self.__check_parameters()
-
 
     def __check_parameters(self):
         """!
@@ -223,16 +219,15 @@ class kmeans_plusplus_initializer:
         if len(self.__data) == 0:
             raise ValueError("Data is empty.")
 
-
     def __calculate_shortest_distances(self, data, centers):
         """!
         @brief Calculates distance from each data point to nearest center.
-        
+
         @param[in] data (numpy.array): Array of points for that initialization is performed.
         @param[in] centers (numpy.array): Array of indexes that represents centers.
-        
+
         @return (numpy.array) List of distances to closest center for each data point.
-        
+
         """
 
         dataset_differences = numpy.zeros((len(centers), len(data)))
@@ -242,14 +237,15 @@ class kmeans_plusplus_initializer:
             if self.__data_type == 'points':
                 dataset_differences[index_center] = self.__metric(data, center)
             elif self.__data_type == 'distance_matrix':
-                dataset_differences[index_center] = numpy.array(self.__data[centers[index_center]])
+                dataset_differences[index_center] = numpy.array(
+                    self.__data[centers[index_center]])
 
         with warnings.catch_warnings():
-            numpy.warnings.filterwarnings('ignore', r'All-NaN (slice|axis) encountered')
+            warnings.filterwarnings(
+                'ignore', r'All-NaN (slice|axis) encountered')
             shortest_distances = numpy.nanmin(dataset_differences, axis=0)
 
         return shortest_distances
-
 
     def __get_next_center(self, centers):
         """!
@@ -274,7 +270,6 @@ class kmeans_plusplus_initializer:
 
         return center_index
 
-
     def __get_initial_center(self, return_index):
         """!
         @brief Choose randomly first center.
@@ -292,7 +287,6 @@ class kmeans_plusplus_initializer:
 
         return self.__data[index_center]
 
-
     def __calculate_probabilities(self, distances):
         """!
         @brief Calculates cumulative probabilities of being center of each point.
@@ -309,7 +303,6 @@ class kmeans_plusplus_initializer:
             return numpy.cumsum(probabilities)
         else:
             return numpy.zeros(len(distances))
-
 
     def __get_probable_center(self, distances, probabilities):
         """!
@@ -339,7 +332,6 @@ class kmeans_plusplus_initializer:
 
         return index_best_candidate
 
-
     def initialize(self, **kwargs):
         """!
         @brief Calculates initial centers using K-Means++ method.
@@ -352,7 +344,7 @@ class kmeans_plusplus_initializer:
         @return (list) List of initialized initial centers.
                   If argument 'return_index' is False then returns list of points.
                   If argument 'return_index' is True then returns list of indexes.
-        
+
         """
 
         return_index = kwargs.get('return_index', None)
