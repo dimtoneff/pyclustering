@@ -10,6 +10,7 @@
 #pragma once
 
 
+#include <limits>
 #include <functional>
 #include <numeric>
 #include <vector>

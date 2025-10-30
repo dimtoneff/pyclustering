@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <limits>
 
 #include <pyclustering/cluster/bsas_data.hpp>
 

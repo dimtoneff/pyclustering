@@ -6,6 +6,7 @@
 
 */
 
+#include <limits>
 #include <pyclustering/cluster/agglomerative.hpp>
 #include <pyclustering/utils/metric.hpp>
 

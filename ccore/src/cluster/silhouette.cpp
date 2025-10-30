@@ -6,6 +6,7 @@
 
 */
 
+#include <limits>
 #include <pyclustering/cluster/silhouette.hpp>
 
 
