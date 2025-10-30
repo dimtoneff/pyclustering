@@ -147,11 +147,11 @@ void kmedians::calculate_median(cluster & current_cluster, point & median) {
     const std::size_t dimension = data[0].size();
 
     for (size_t index_dimension = 0; index_dimension < dimension; index_dimension++) {
-        std::sort(current_cluster.begin(), current_cluster.end(), 
-            [this](std::size_t index_object1, std::size_t index_object2) 
-        {
-            return (*m_ptr_data)[index_object1] > (*m_ptr_data)[index_object2];
-        });
+        std::sort(current_cluster.begin(), current_cluster.end(),
+                [this, &index_dimension](std::size_t index_object1, std::size_t index_object2)
+            {
+                return (*m_ptr_data)[index_object1][index_dimension] > (*m_ptr_data)[index_object2][index_dimension];
+            });
 
         std::size_t relative_index_median = (std::size_t) (current_cluster.size() - 1) / 2;
         std::size_t index_median = current_cluster[relative_index_median];

@@ -355,13 +355,13 @@ class kmeans_plusplus_initializer:
             raise ValueError("In case of 'distance_matrix' data type, parameter 'return_index' cannot be 'False'. "
                              "Please, use 'return_index=True' in case of 'distance_matrix' data type.")
 
-        index_point = self.__get_initial_center(True)
+        index_point = int(self.__get_initial_center(True))
         centers = [index_point]
         self.__free_indexes.remove(index_point)
 
         # For each next center
         for _ in range(1, self.__amount):
-            index_point = self.__get_next_center(centers)
+            index_point = int(self.__get_next_center(centers))
             centers.append(index_point)
             self.__free_indexes.remove(index_point)
 
