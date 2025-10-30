@@ -20,33 +20,32 @@ class type_metric(IntEnum):
 
     """
 
-    ## Euclidean distance, for more information see function 'euclidean_distance'.
+    # Euclidean distance, for more information see function 'euclidean_distance'.
     EUCLIDEAN = 0
 
-    ## Square Euclidean distance, for more information see function 'euclidean_distance_square'.
+    # Square Euclidean distance, for more information see function 'euclidean_distance_square'.
     EUCLIDEAN_SQUARE = 1
 
-    ## Manhattan distance, for more information see function 'manhattan_distance'.
+    # Manhattan distance, for more information see function 'manhattan_distance'.
     MANHATTAN = 2
 
-    ## Chebyshev distance, for more information see function 'chebyshev_distance'.
+    # Chebyshev distance, for more information see function 'chebyshev_distance'.
     CHEBYSHEV = 3
 
-    ## Minkowski distance, for more information see function 'minkowski_distance'.
+    # Minkowski distance, for more information see function 'minkowski_distance'.
     MINKOWSKI = 4
 
-    ## Canberra distance, for more information see function 'canberra_distance'.
+    # Canberra distance, for more information see function 'canberra_distance'.
     CANBERRA = 5
 
-    ## Chi square distance, for more information see function 'chi_square_distance'.
+    # Chi square distance, for more information see function 'chi_square_distance'.
     CHI_SQUARE = 6
 
-    ## Gower distance, for more information see function 'gower_distance'.
+    # Gower distance, for more information see function 'gower_distance'.
     GOWER = 7
 
-    ## User defined function for distance calculation between two points.
+    # User defined function for distance calculation between two points.
     USER_DEFINED = 1000
-
 
 
 class distance_metric:
@@ -92,6 +91,7 @@ class distance_metric:
     @endcode
 
     """
+
     def __init__(self, metric_type, **kwargs):
         """!
         @brief Creates distance metric instance for calculation distance between two points.
@@ -118,7 +118,6 @@ class distance_metric:
 
         self.__calculator = self.__create_distance_calculator()
 
-
     def __call__(self, point1, point2):
         """!
         @brief Calculates distance between two points.
@@ -131,7 +130,6 @@ class distance_metric:
         """
         return self.__calculator(point1, point2)
 
-
     def get_type(self):
         """!
         @brief Return type of distance metric that is used.
@@ -140,7 +138,6 @@ class distance_metric:
 
         """
         return self.__type
-
 
     def get_arguments(self):
         """!
@@ -151,7 +148,6 @@ class distance_metric:
         """
         return self.__args
 
-
     def get_function(self):
         """!
         @brief Return user-defined function for calculation distance metric.
@@ -160,7 +156,6 @@ class distance_metric:
 
         """
         return self.__func
-
 
     def enable_numpy_usage(self):
         """!
@@ -172,7 +167,6 @@ class distance_metric:
         if self.__type != type_metric.USER_DEFINED:
             self.__calculator = self.__create_distance_calculator()
 
-
     def disable_numpy_usage(self):
         """!
         @brief Stop using numpy for distance calculation.
@@ -182,7 +176,6 @@ class distance_metric:
         """
         self.__numpy = False
         self.__calculator = self.__create_distance_calculator()
-
 
     def __create_distance_calculator(self):
         """!
@@ -195,7 +188,6 @@ class distance_metric:
             return self.__create_distance_calculator_numpy()
 
         return self.__create_distance_calculator_basic()
-
 
     def __create_distance_calculator_basic(self):
         """!
@@ -235,7 +227,6 @@ class distance_metric:
         else:
             raise ValueError("Unknown type of metric: '%d'", self.__type)
 
-
     def __get_gower_max_range(self):
         """!
         @brief Returns max range for Gower distance using input parameters ('max_range' or 'data').
@@ -247,13 +238,13 @@ class distance_metric:
         if max_range is None:
             data = self.__args.get('data', None)
             if data is None:
-                raise ValueError("Gower distance requires 'data' or 'max_range' argument to construct metric.")
+                raise ValueError(
+                    "Gower distance requires 'data' or 'max_range' argument to construct metric.")
 
             max_range = numpy.max(data, axis=0) - numpy.min(data, axis=0)
             self.__args['max_range'] = max_range
 
         return max_range
-
 
     def __create_distance_calculator_numpy(self):
         """!
@@ -294,7 +285,6 @@ class distance_metric:
             raise ValueError("Unknown type of metric: '%d'", self.__type)
 
 
-
 def euclidean_distance(point1, point2):
     """!
     @brief Calculate Euclidean distance between two vectors.
@@ -328,6 +318,9 @@ def euclidean_distance_numpy(object1, object2):
     @return (double) Euclidean distance between two objects.
 
     """
+    object1 = numpy.asarray(object1)
+    object2 = numpy.asarray(object2)
+
     if len(object1.shape) > 1 or len(object2.shape) > 1:
         return numpy.sqrt(numpy.sum(numpy.square(object1 - object2), axis=1))
     else:
@@ -367,6 +360,9 @@ def euclidean_distance_square_numpy(object1, object2):
     @return (double) Square Euclidean distance between two objects.
 
     """
+    object1 = numpy.asarray(object1)
+    object2 = numpy.asarray(object2)
+
     if len(object1.shape) > 1 or len(object2.shape) > 1:
         return numpy.sum(numpy.square(object1 - object2), axis=1).T
     else:
@@ -408,6 +404,9 @@ def manhattan_distance_numpy(object1, object2):
     @return (double) Manhattan distance between two objects.
 
     """
+    object1 = numpy.asarray(object1)
+    object2 = numpy.asarray(object2)
+
     if len(object1.shape) > 1 or len(object2.shape) > 1:
         return numpy.sum(numpy.absolute(object1 - object2), axis=1).T
     else:
@@ -451,6 +450,9 @@ def chebyshev_distance_numpy(object1, object2):
     @return (double) Chebyshev distance between two objects.
 
     """
+    object1 = numpy.asarray(object1)
+    object2 = numpy.asarray(object2)
+
     if len(object1.shape) > 1 or len(object2.shape) > 1:
         return numpy.max(numpy.absolute(object1 - object2), axis=1).T
     else:
@@ -492,6 +494,9 @@ def minkowski_distance_numpy(object1, object2, degree=2):
     @return (double) Minkowski distance between two object.
 
     """
+    object1 = numpy.asarray(object1)
+    object2 = numpy.asarray(object2)
+
     if len(object1.shape) > 1 or len(object2.shape) > 1:
         return numpy.power(numpy.sum(numpy.power(object1 - object2, degree), axis=1), 1/degree)
     else:
@@ -533,8 +538,12 @@ def canberra_distance_numpy(object1, object2):
     @return (float) Canberra distance between two objects.
 
     """
+    object1 = numpy.asarray(object1)
+    object2 = numpy.asarray(object2)
+
     with numpy.errstate(divide='ignore', invalid='ignore'):
-        result = numpy.divide(numpy.abs(object1 - object2), numpy.abs(object1) + numpy.abs(object2))
+        result = numpy.divide(numpy.abs(object1 - object2),
+                              numpy.abs(object1) + numpy.abs(object2))
 
     if len(result.shape) > 1:
         return numpy.sum(numpy.nan_to_num(result), axis=1).T
@@ -575,8 +584,12 @@ def chi_square_distance_numpy(object1, object2):
     @return (float) Chi square distance between two objects.
 
     """
+    object1 = numpy.asarray(object1)
+    object2 = numpy.asarray(object2)
+
     with numpy.errstate(divide='ignore', invalid='ignore'):
-        result = numpy.divide(numpy.power(object1 - object2, 2), numpy.abs(object1) + numpy.abs(object2))
+        result = numpy.divide(numpy.power(
+            object1 - object2, 2), numpy.abs(object1) + numpy.abs(object2))
 
     if len(result.shape) > 1:
         return numpy.sum(numpy.nan_to_num(result), axis=1).T
@@ -626,6 +639,10 @@ def gower_distance_numpy(point1, point2, max_range):
     @return (float) Gower distance between two objects.
 
     """
+    point1 = numpy.asarray(point1)
+    point2 = numpy.asarray(point2)
+    max_range = numpy.asarray(max_range)
+
     with numpy.errstate(divide='ignore', invalid='ignore'):
         result = numpy.divide(numpy.abs(point1 - point2), max_range)
 

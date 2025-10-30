@@ -400,7 +400,7 @@ class kmeans:
                                  (self.__observer is not None), ccore_metric.get_pointer())
 
         self.__clusters = results[0]
-        self.__centers = results[1]
+        self.__centers = numpy.array(results[1])
 
         if self.__observer is not None:
             self.__observer.set_evolution_clusters(results[2])
