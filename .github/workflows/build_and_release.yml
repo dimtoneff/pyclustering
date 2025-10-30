@@ -87,17 +87,25 @@ jobs:
         with:
           path: dist_all
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: "PyClustering Wheels ${{ github.ref_name }}"
-          body: |
-            Prebuilt PyClustering wheels for:
-            - Python 3.10, 3.11, 3.12
-            - Linux, macOS, Windows
+      # - name: Create GitHub Release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     tag_name: ${{ github.ref_name }}
+      #     name: "PyClustering Wheels ${{ github.ref_name }}"
+      #     body: |
+      #       Prebuilt PyClustering wheels for:
+      #       - Python 3.10, 3.11, 3.12
+      #       - Linux, macOS, Windows
 
-            These include the compiled CCORE library.
-          files: dist_all/**/*.whl
+      #       These include the compiled CCORE library.
+      #     files: dist_all/**/*.whl
+      - name: Upload wheels to GitHub Release (fixed tag)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "0.10.1.3"
+          name: "PyClustering Prebuilt Wheels 0.10.1.3"
+          files: dist/**/*.whl
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
